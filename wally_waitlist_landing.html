@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wally — Waitlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --lime: #CAFF4D;
+    --dark: #0D0D0D;
+    --mid: #1A1A1A;
+    --border: rgba(255,255,255,0.1);
+    --muted: rgba(255,255,255,0.4);
+  }
+
+  body {
+    background: var(--dark);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--lime); }
+  .nav-tag { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px; }
+
+  /* HERO */
+  .hero { padding: 80px 0 60px; }
+  .hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--lime); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; display: flex; align-items: center; gap: 10px; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 24px; height: 1px; background: var(--lime); }
+
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(72px, 13vw, 140px); line-height: 0.92; letter-spacing: -1px; margin-bottom: 40px; }
+  .hero-title span { color: var(--lime); }
+
+  .hero-body { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: end; }
+  .hero-desc { font-size: 17px; line-height: 1.65; color: rgba(255,255,255,0.65); font-weight: 300; max-width: 360px; }
+  .hero-desc strong { color: #fff; font-weight: 500; }
+
+  /* FORM */
+  .form-block { }
+  .form-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .form-row { display: flex; gap: 8px; }
+  .email-input {
+    flex: 1; background: var(--mid); border: 1px solid var(--border);
+    color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px;
+    padding: 14px 18px; border-radius: 8px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .email-input::placeholder { color: rgba(255,255,255,0.25); }
+  .email-input:focus { border-color: var(--lime); }
+  .cta-btn {
+    background: var(--lime); color: var(--dark); border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    padding: 14px 22px; border-radius: 8px; cursor: pointer;
+    white-space: nowrap; transition: transform 0.15s, opacity 0.15s;
+  }
+  .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .cta-btn:active { transform: scale(0.97); }
+  .form-hint { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  .success-msg { display: none; background: rgba(202,255,77,0.1); border: 1px solid rgba(202,255,77,0.3); border-radius: 8px; padding: 14px 18px; font-size: 14px; color: var(--lime); }
+  .success-msg.show { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 64px 0; }
+
+  /* FEATURES */
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px; }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .feat {
+    background: var(--mid); padding: 28px 24px;
+  }
+  .feat:first-child { border-radius: 12px 0 0 12px; }
+  .feat:last-child { border-radius: 0 12px 12px 0; }
+  .feat-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--lime); line-height: 1; margin-bottom: 12px; }
+  .feat-title { font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+  .feat-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* MARQUEE */
+  .ticker { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 0; margin: 64px 0; }
+  .ticker-inner { display: flex; gap: 48px; animation: scroll 18s linear infinite; width: max-content; }
+  .ticker-item { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--muted); white-space: nowrap; }
+  .ticker-item.hl { color: var(--lime); }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .stat { background: var(--mid); padding: 32px 28px; }
+  .stat:first-child { border-radius: 12px 0 0 12px; }
+  .stat:last-child { border-radius: 0 12px 12px 0; }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: #fff; line-height: 1; }
+  .stat-val span { color: var(--lime); }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 32px 0; display: flex; align-items: center; justify-content: space-between; }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--lime); letter-spacing: 2px; }
+  .footer-text { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  /* COUNTER */
+  .counter-row { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+  .counter-pill { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--lime); background: rgba(202,255,77,0.1); border: 1px solid rgba(202,255,77,0.2); padding: 5px 14px; border-radius: 100px; }
+  .counter-bar-wrap { flex: 1; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .counter-bar { height: 100%; background: var(--lime); border-radius: 2px; width: 23%; transition: width 0.5s ease; }
+
+  @media (max-width: 640px) {
+    .hero-body { grid-template-columns: 1fr; gap: 32px; }
+    .features { grid-template-columns: 1fr; }
+    .feat:first-child { border-radius: 12px 12px 0 0; }
+    .feat:last-child { border-radius: 0 0 12px 12px; }
+    .stats { grid-template-columns: 1fr; }
+    .stat:first-child { border-radius: 12px 12px 0 0; }
+    .stat:last-child { border-radius: 0 0 12px 12px; }
+    .form-row { flex-direction: column; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<div class="wrap">
+
+  <nav>
+    <div class="logo">Wally</div>
+    <div class="nav-tag">Coming soon</div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">Персональные финансы</div>
+    <h1 class="hero-title">Твои<br>деньги<br><span>видят</span><br>тебя</h1>
+
+    <div class="hero-body">
+      <p class="hero-desc">
+        Wally — PWA-приложение, которое <strong>сканирует чеки</strong>, отслеживает бюджет и даёт <strong>AI-аналитику</strong> без лишнего шума. Просто навёл камеру — всё занесено.
+      </p>
+
+      <div class="form-block">
+        <div class="form-label">Войти в waitlist</div>
+        <div class="form-row">
+          <input class="email-input" type="email" id="emailInput" placeholder="your@email.com">
+          <button class="cta-btn" id="joinBtn">Войти</button>
+        </div>
+        <p class="form-hint" id="formHint">Без спама. Только когда запустимся.</p>
+        <div class="success-msg" id="successMsg">
+          Ты в списке. Осталось подождать совсем немного.
+        </div>
+
+        <div class="counter-row">
+          <span class="counter-pill" id="counterPill">0 человек</span>
+          <div class="counter-bar-wrap">
+            <div class="counter-bar" id="counterBar"></div>
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">100 мест</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item hl">Сканируй чеки</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item">Контроль бюджета</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item hl">AI-аналитика</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item">Без ручного ввода</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item hl">Работает офлайн</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item">Telegram-уведомления</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item hl">Сканируй чеки</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item">Контроль бюджета</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item hl">AI-аналитика</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item">Без ручного ввода</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item hl">Работает офлайн</span>
+    <span class="ticker-item">·</span>
+    <span class="ticker-item">Telegram-уведомления</span>
+    <span class="ticker-item">·</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="section-label">Что умеет Wally</div>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-num">01</div>
+      <div class="feat-title">Сканирование чека</div>
+      <div class="feat-desc">Наводишь камеру — AI читает чек и раскладывает по категориям за секунду.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">02</div>
+      <div class="feat-title">Умный бюджет</div>
+      <div class="feat-desc">Задаёшь лимиты по категориям. Wally следит и предупреждает, пока ещё не поздно.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">03</div>
+      <div class="feat-title">AI-отчёты</div>
+      <div class="feat-desc">Месячная аналитика на понятном языке: где перетратил, где сэкономил.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Почему это важно</div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val">73<span>%</span></div>
+      <div class="stat-label">людей не знают, куда уходят деньги в конце месяца</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">8<span>мин</span></div>
+      <div class="stat-label">— столько тратят на ручной ввод расходов. Wally делает за 3 секунды.</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0<span>₸</span></div>
+      <div class="stat-label">для первых пользователей. Навсегда.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Wally</div>
+    <div class="footer-text">© 2025 · Сделано в Казахстане</div>
+  </footer>
+
+</div>
+
+<script>
+  const KEY = 'wally_waitlist';
+
+  function getList() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+  }
+
+  function saveEmail(email) {
+    const list = getList();
+    if (list.includes(email)) return false;
+    list.push(email);
+    localStorage.setItem(KEY, JSON.stringify(list));
+    return true;
+  }
+
+  function updateCounter() {
+    const count = getList().length;
+    const pill = document.getElementById('counterPill');
+    const bar = document.getElementById('counterBar');
+    pill.textContent = count + ' ' + (count === 1 ? 'человек' : count < 5 ? 'человека' : 'человек');
+    bar.style.width = Math.min(count / 100 * 100, 100) + '%';
+  }
+
+  document.getElementById('joinBtn').addEventListener('click', function() {
+    const input = document.getElementById('emailInput');
+    const email = input.value.trim();
+    const hint = document.getElementById('formHint');
+    const success = document.getElementById('successMsg');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      input.style.borderColor = '#E24B4A';
+      hint.textContent = 'Введи корректный email';
+      hint.style.color = '#E24B4A';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        hint.textContent = 'Без спама. Только когда запустимся.';
+        hint.style.color = '';
+      }, 2000);
+      return;
+    }
+
+    const saved = saveEmail(email);
+    if (saved) {
+      input.style.display = 'none';
+      document.getElementById('joinBtn').style.display = 'none';
+      hint.style.display = 'none';
+      success.classList.add('show');
+    } else {
+      hint.textContent = 'Этот email уже в списке 👀';
+      hint.style.color = 'var(--lime)';
+    }
+    updateCounter();
+  });
+
+  document.getElementById('emailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('joinBtn').click();
+  });
+
+  updateCounter();
+</script>
+</body>
+</html>
